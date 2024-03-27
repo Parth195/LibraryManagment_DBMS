@@ -1,0 +1,160 @@
+CREATE DATABASE knowledge_hub;
+USE knowledge_hub;
+
+CREATE TABLE Books(BOOK_ID int primary key, BOOK_NAME VARCHAR(50), AUTHOR VARCHAR(30), SUBJECT VARCHAR(20), e_book VARCHAR(255), LOCATION VARCHAR(255), TOTAL_NO_OF_BOOKS int, BOOKS_AVAILABLE_TO_ISSUE int);
+
+CREATE TABLE Genre(BOOK_ID int, genre varchar(20), primary key(BOOK_ID, genre), foreign key(BOOK_ID) references Books(BOOK_ID));
+
+CREATE TABLE ISSUE(BOOK_ID2 int, ISSUED_BY VARCHAR(255), primary key(BOOK_ID2, ISSUED_BY), FOREIGN KEY (BOOK_ID2) REFERENCES BOOKS(BOOK_ID));
+
+CREATE TABLE COLLEGES(COLLEGE_ID int primary key, COLLEGE_NAME VARCHAR(50), COUNTRY VARCHAR(20), MIN_CGPA_REQUIRED DECIMAL(4,2));
+
+Create TABLE EXAM(COLLEGE_ID int, DEGREE VARCHAR(50), STREAM Varchar(50), Exams Varchar(50), primary key(COLLEGE_ID, DEGREE, STREAM, Exams), FOREIGN KEY (COLLEGE_ID) REFERENCES COLLEGES(COLLEGE_ID));
+
+CREATE TABLE SLOT(SLOT_ID VARCHAR(5) primary key, TOTAL_NO_OF_SEATS INT, WHITEBOARD VARCHAR(3), PROJECTOR VARCHAR(3), ISSUED_BY VARCHAR(20) DEFAULT(NULL), log_time datetime DEFAULT(NULL));
+
+create table log_details(Book_ID2 int, issued_by varchar(255), log_time datetime not NULL, entry_type varchar(50), primary key(Book_ID2, issued_by, log_time, entry_type));
+
+CREATE TABLE Required_for AS
+SELECT books.BOOK_ID, exam.COLLEGE_ID, books.subject AS SUBJECT
+FROM books
+INNER JOIN exam ON books.SUBJECT = exam.stream;
+
+create table CGPA(ROLL_NO int primary key, Current_CGPA decimal(4,2), Completed_sem int, Desired_CGPA decimal(4,2), Completed_credits int, Credits_left int, Required_SGPA decimal(4,2));
+
+INSERT INTO Books values(100,'CONCEPTS OF PHYSICS', 'H.C.VERMA', 'PHYSICS','Not Available','G123', 6, 4);
+
+INSERT INTO Genre Values(100, 'Mechanics');
+INSERT INTO Genre Values(100, 'Thermodynamics');
+
+INSERT INTO ISSUE values(100, '2110110368');
+
+INSERT INTO COLLEGES values(1000, 'Technical University of Munich', 'Germany', 7.5);
+
+INSERT INTO EXAM values(1000, 'M.S.', 'CSE', 'GRE');
+INSERT INTO EXAM values(1000, 'M.S.', 'CSE', 'IELTS');
+INSERT INTO EXAM values(1000, 'M.S.', 'ECE', 'GRE');
+INSERT INTO EXAM values(1000, 'M.S.', 'ECE', 'IELTS');
+INSERT INTO EXAM values(1000, 'M.Tech.', 'CSE', 'GRE');
+INSERT INTO EXAM values(1000, 'M.Tech.', 'CSE', 'IELTS');
+INSERT INTO EXAM values(1000, 'M.Tech.', 'ECE', 'GRE');
+INSERT INTO EXAM values(1000, 'M.Tech.', 'ECE', 'IELTS');
+
+INSERT INTO SLOT VALUES('DR001', 15, 'YES', 'YES', NULL, NULL);
+INSERT INTO SLOT VALUES('DR002', 20, 'YES', 'NO', NULL, NULL);
+INSERT INTO SLOT VALUES('DR003', 25, 'NO', 'YES', NULL, NULL);
+INSERT INTO SLOT VALUES('DR004', 20, 'NO', 'YES', NULL, NULL);
+
+insert into CGPA values(2110110512, 8.3, 4, 9, 90, 70, 9.9);
+
+
+
+DELIMITER //
+
+CREATE FUNCTION CalculateRequiredCGPA(
+    in_current_cgpa DECIMAL(4,2), -- Assuming CGPA is in the range 0.00 to 10.00
+    in_completed_semesters INT,
+    in_desired_cgpa DECIMAL(4,2),
+    in_completed_credits INT,
+    in_credits_left INT
+)
+RETURNS VARCHAR(50) deterministic -- Adjust the data type based on your needs
+BEGIN
+    DECLARE total_semesters INT DEFAULT 8;
+    DECLARE total_credits INT DEFAULT in_completed_credits + in_credits_left;
+    DECLARE required_cgpa DECIMAL(4,2);
+
+    -- Check if the student has already completed all semesters
+    IF in_completed_semesters >= total_semesters THEN
+        RETURN 'Already completed all semesters'; -- No need to calculate, return a message
+    END IF;
+
+    -- Calculate the required CGPA per semester to achieve the desired wh
+    SET required_cgpa = ((in_desired_cgpa * total_credits) - (in_current_cgpa * in_completed_credits)) / in_credits_left;
+
+    -- Ensure the required CGPA is within valid bounds (0.00 to 10.00)
+    IF required_cgpa < 0.00 THEN
+        SET required_cgpa = 0.00;
+    ELSEIF required_cgpa > 10.00 THEN
+        RETURN 'Not possible'; -- Return a message indicating it's not possible
+    END IF;
+
+    RETURN required_cgpa;
+END //
+
+
+CREATE TRIGGER New_record_AfterInsert
+AFTER INSERT ON ISSUE
+FOR EACH ROW
+BEGIN
+INSERT INTO Log_Details (Book_ID2, issued_by, log_time, entry_type) VALUES (NEW.Book_ID2, NEW.issued_by, NOW(), 'issued');
+END; //
+
+
+CREATE TRIGGER Delete_record_AfterDelete
+AFTER DELETE ON ISSUE
+FOR EACH ROW
+BEGIN
+INSERT INTO Log_Details (Book_ID2, issued_by, log_time, entry_type) VALUES (OLD.Book_ID2, OLD.issued_by, NOW(), 'returned');
+END; //
+
+
+CREATE PROCEDURE insert_into_books(in BID int, in BN varchar(50), in au varchar(30), in sub varchar(20), in eb varchar(255), in loc varchar(255), in tnob int, in bati int)
+BEGIN
+INSERT INTO books values(BID, BN, au, sub, eb, loc, tnob, bati);
+END//
+
+CALL insert_into_books(102, 'Intro to ALGO', 'H. Cormen', 'CSE', 'https://shorturl.at/btNX1', 'F432', 10, 7);
+CALL insert_into_books(101, 'Harry Potter and the Philosophers Stone', 'J. K. Rowling', 'NOVEL', 'Not Available', 'F123', 4, 2);
+
+CREATE PROCEDURE insert_into_genre(in BID int, in genre varchar(20))
+BEGIN
+INSERT INTO genre values(BID, genre);
+END//
+
+call insert_into_genre(101, 'Adventure');
+call insert_into_genre(101, 'Fantasy');
+call insert_into_genre(101, 'Fiction');
+call insert_into_genre(102, 'Data Structures');
+call insert_into_genre(102, 'Data Algorithms');
+call insert_into_genre(102, 'Recursion');
+
+
+CREATE PROCEDURE insert_into_colleges(in CID int, in CN varchar(50), in country varchar(20), in minCG decimal(4,2))
+BEGIN
+INSERT INTO colleges values(CID, CN, country, minCG);
+END//
+
+call insert_into_colleges(1002, 'Indian Institute of Technology - Madras', 'India', 7.00);
+call insert_into_colleges(1001, 'Technical University of Berlin', 'Germany', 7.25);
+
+
+CREATE PROCEDURE insert_into_exam(in CID int, in DEG varchar(50), in STREAM varchar(50), in EXAM varchar(30))
+BEGIN
+INSERT INTO exam values(CID, DEG, STREAM, EXAM);
+END//
+
+call insert_into_exam(1002, 'M.Tech.', 'Physics', 'GATE');
+call insert_into_exam(1002, 'M.Tech.', 'Physics', 'TANCET');
+
+INSERT INTO EXAM values(1001, 'M.S.', 'CSE', 'GRE');
+INSERT INTO EXAM values(1001, 'M.S.', 'CSE', 'IELTS');
+INSERT INTO EXAM values(1001, 'M.S.', 'ECE', 'GRE');
+INSERT INTO EXAM values(1001, 'M.S.', 'ECE', 'IELTS');
+INSERT INTO EXAM values(1001, 'M.Tech.', 'CSE', 'GRE');
+INSERT INTO EXAM values(1001, 'M.Tech.', 'CSE', 'IELTS');
+INSERT INTO EXAM values(1001, 'M.Tech.', 'ECE', 'GRE');
+INSERT INTO EXAM values(1001, 'M.Tech.', 'ECE', 'IELTS');
+
+
+CREATE EVENT reset_slots
+ON SCHEDULE
+    EVERY 1 MINUTE
+DO
+BEGIN
+    UPDATE slot
+    SET ISSUED_BY = NULL, log_time = NULL
+    WHERE log_time <= NOW() - INTERVAL 2 HOUR AND ISSUED_BY IS NOT NULL;
+END //
+
+DELIMITER ;
