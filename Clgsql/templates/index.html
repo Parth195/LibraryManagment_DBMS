@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Library Management System</title>
+
+    
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #495057;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, h2 {
+            color: #007BFF;
+            text-align: center;
+        }
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: linear-gradient(180deg, #ffffff, #f0f0f0);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        form {
+            width: 50%;
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+            background-color: white;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #007BFF;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+           background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+	
+            transition: background-color 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); /* Darker shadow */
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        a {
+            text-decoration: none;
+            margin: 10px;
+            display: flex;
+        }
+
+        a button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); /* Darker shadow */
+        }
+
+        a + a button {
+            margin-left: 10px;
+        }
+
+        a button:hover {
+            background-color: #0056b3;
+        }
+
+        #login-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Add styles for the discussion room button */
+        #login-form button {
+            background-color: #28a745; /* Green button color */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); /* Darker shadow */
+        }
+
+        #login-form button:hover {
+            background-color: #218838;
+        }
+
+        /* Style for the ADMIN button */
+        #admin-form a button {
+            background-color: #3CB043; /* Blue button color for ADMIN */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            margin-left:1250px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); /* Darker shadow */
+        }
+
+        #admin-form a button:hover {
+            background-color: #0056b3;
+        }
+ #user-actions {
+            display: flex;
+            flex-direction: row;
+        }
+
+        #user-actions a {
+            margin-right: 10px;
+        }
+
+        #user-actions a:last-child {
+            margin-right: 0;
+        }
+
+        #user-actions span {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+    <h1>LIBRARY MANAGEMENT SYSTEM</h1>
+
+    
+<div id="login-form">
+<div id="user-actions">
+        {% if session.logged_in %}
+            <span>Welcome, {{ session.user_name }}</span>
+            <a href="/logout"><button>Logout</button></a>
+        {% else %}
+            <a href="/login">Login</a>
+            <a href="/signup">Signup</a>
+        {% endif %}
+    </div>
+    <h2>Book List</h2>
+
+    <table border="1">
+        <tr>
+            <th>Book ID</th>
+            <th>Book Name</th>
+            <th>Author</th>
+            <th>Subject</th>
+            <th>eBook</th>
+            <th>Location</th>
+            <th>Total No. of Books</th>
+            <th>Available to Issue</th>
+            <th>Genre</th>
+        </tr>
+        {% for book in books %}
+        <tr>
+            <td>{{ book.BOOK_ID }}</td>
+            <td>{{ book.BOOK_NAME }}</td>
+            <td>{{ book.AUTHOR }}</td>
+            <td>{{ book.SUBJECT }}</td>
+            <td>{{ book.e_book }}</td>
+            <td>{{ book.LOCATION }}</td>
+            <td>{{ book.TOTAL_NO_OF_BOOKS }}</td>
+            <td>{{ book.BOOKS_AVAILABLE_TO_ISSUE }}</td>
+            <td>{{ book.genres }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Search Form -->
+<h2>Search Books</h2>
+<form action="{{ url_for('search_results') }}" method="post">
+    <label for="book_id">Book ID:</label>
+    <input type="text" id="book_id" name="book_id">
+    <br>
+
+    <label for="book_name">Book Name:</label>
+    <input type="text" id="book_name" name="book_name">
+    <br>
+
+    <label for="author">Author:</label>
+    <input type="text" id="author" name="author">
+    <br>
+
+    <label for="subject">Subject:</label>
+    <input type="text" id="subject" name="subject">
+    <br>
+
+    <label for="e_book">eBook:</label>
+    <input type="text" id="e_book" name="e_book">
+    <br>
+
+    <label for="location">Location:</label>
+    <input type="text" id="location" name="location">
+    <br>
+
+    <label for="genre">Genre:</label>
+    <input type="text" id="genre" name="genre">
+    <br>
+
+    <button type="submit">Search</button>
+</form>
+
+    <!-- Issue Book Form -->
+    <h2>Issue Book</h2>
+    <form action="{{ url_for('issue_book') }}" method="post">
+        <label for="book_id">Book ID:</label>
+        <input type="text" id="book_id" name="book_id" required>
+        <br>
+
+        <label for="roll_number">Roll Number:</label>
+        <input type="text" id="roll_number" name="roll_number" required>
+        <br>
+
+        <button type="submit">Issue Book</button>
+    </form>
+
+    <!-- Return Book Form -->
+    <h2>Return Book</h2>
+    <form action="{{ url_for('return_book') }}" method="post">
+        <label for="book_id_return">Book ID:</label>
+        <input type="text" id="book_id_return" name="book_id" required>
+        <br>
+
+        <label for="roll_number_return">Roll Number:</label>
+        <input type="text" id="roll_number_return" name="roll_number" required>
+        <br>
+
+        <button type="submit">Return Book</button>
+
+    </form>
+</div>
+
+<!-- Add a button to redirect to college-search -->
+    <a href="{{ url_for('college_search') }}"><button>Search Colleges</button></a>
+
+    <!-- Add a button to redirect to college-search -->
+    <a href="{{ url_for('calculate_required_cgpa') }}"><button>CGPA Calculator</button></a>	
+	
+    <!-- Add a button to redirect to slot-booking -->
+    <a href="{{ url_for('unissued_slots') }}"><button>Book a Discussion Room</button></a>	
+</body>
+</html>

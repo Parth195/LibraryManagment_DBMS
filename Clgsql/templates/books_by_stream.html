@@ -1,0 +1,16 @@
+<!-- books_by_stream.html -->
+<h1>Books for Stream/Subject: {{ stream }}</h1>
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <!-- Add other necessary columns -->
+    </tr>
+    {% for book in books %}
+    <tr>
+        <td>{{ book.Book_Name }}</td>
+        <td>{{ book.Author }}</td>
+        <!-- Add other necessary columns -->
+    </tr>
+    {% endfor %}
+</table>
