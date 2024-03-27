@@ -1,0 +1,109 @@
+<!-- templates/search_results.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Results</title>
+
+
+
+<style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #495057;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #007BFF;
+            text-align: center;
+        }
+
+        p {
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #ffffff, #f0f0f0);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        a {
+            text-decoration: none;
+            margin: 10px;
+            display: flex;
+        }
+
+        a button {
+            background-color: #3CB043;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); /* Darker shadow */
+        }
+
+        a + a button {
+            margin-left: 10px;
+        }
+
+        a button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search Results</h1>
+    <p>Search Criteria: {{ criteria }}</p>
+    <p>Keyword: {{ keyword }}</p>
+    <table border="1">
+        <tr>
+            <th>Book ID</th>
+            <th>Book Name</th>
+            <th>Author</th>
+            <th>Subject</th>
+            <th>eBook</th>
+            <th>Location</th>
+            <th>Total No. of Books</th>
+            <th>Available to Issue</th>
+            <th>Genre</th>
+        </tr>
+        {% for book in result %}
+        <tr>
+            <td>{{ book.BOOK_ID }}</td>
+            <td>{{ book.BOOK_NAME }}</td>
+            <td>{{ book.AUTHOR }}</td>
+            <td>{{ book.SUBJECT }}</td>
+            <td>{{ book.e_book }}</td>
+            <td>{{ book.LOCATION }}</td>
+            <td>{{ book.TOTAL_NO_OF_BOOKS }}</td>
+            <td>{{ book.BOOKS_AVAILABLE_TO_ISSUE }}</td>
+            <td>{{ book.genre}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

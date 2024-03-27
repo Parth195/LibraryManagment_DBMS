@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>College Search</title>
+
+<style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #495057;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #007BFF;
+            text-align: center;
+        }
+
+        form {
+            width: 50%;
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+            background-color: white;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #007BFF;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #28a745; /* Green button color */
+            color: white;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); /* Darker shadow */
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>College Search</h1>
+
+    <!-- College Search Form -->
+    <form action="{{ url_for('college_search_results') }}" method="post">
+        <label for="criteria">Search Criteria:</label>
+        <select id="criteria" name="criteria" required>
+    <option value="COLLEGE_ID">College ID</option>
+    <option value="COLLEGE_NAME">College Name</option>
+    <option value="COUNTRY">Country</option>
+    <option value="MIN_CGPA_REQUIRED" {% if criteria == 'MIN_CGPA_REQUIRED' %} selected {% endif %}>Min CGPA Required</option>
+    <option value="DEGREE">Degree</option>
+    <option value="STREAM">Stream</option>
+    <option value="EXAMS">Exams</option>
+</select>
+
+        <br>
+
+        <label for="keyword">Keyword:</label>
+<input type="text" id="keyword" name="keyword" value="{% if desired_cgpa %}{{ desired_cgpa }}{% endif %}" required>
+<br>
+
+
+        <!-- Hidden input field for Min CGPA Required -->
+        <input type="hidden" name="min_cgpa_required" value="{{ required_cgpa }}">
+
+        <button id="searchBtn" type="submit">Search</button>
+    </form>
+<script>
+    window.onload = function() {
+        // Check if the desired_cgpa is present and auto-submit the form
+        var desiredCGPA = "{{ desired_cgpa }}";
+        if (desiredCGPA) {
+            document.getElementById('searchBtn').click();
+        }
+    };
+</script>
+
+</body>
+</html>

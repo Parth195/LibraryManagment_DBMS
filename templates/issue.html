@@ -1,0 +1,30 @@
+<!-- templates/issue.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Issued Books</title>
+</head>
+<body>
+    <h1>Issued Books</h1>
+    <table>
+        <tr>
+            <th>Book ID</th>
+            <th>Location</th>
+            <th>Total Number of Books</th>
+            <th>Books Available to Issue</th>
+            <th>Issued By</th>
+            <!-- Add more headers based on your table structure -->
+        </tr>
+        {% for issue in issues %}
+        <tr>
+            <td>{{ issue.BOOK_ID2 }}</td>
+            <td>{{ issue.LOCATION }}</td>
+            <td>{{ issue.TOTAL_NO_OF_BOOKS }}</td>
+            <td>{{ issue.BOOKS_AVAILABLE_TO_ISSUE }}</td>
+            <td>{{ issue.ISSUED_BY }}</td>
+            <!-- Add more fields based on your table structure -->
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

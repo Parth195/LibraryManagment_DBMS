@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Unissued Slots</title>
+
+ <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #495057;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #007BFF;
+            text-align: center;
+        }
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        tbody td {
+            text-align: center;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007BFF;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Unissued Slots</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>SLOT ID</th>
+                <th>Total No of Seats</th>
+                <th>White Board</th>
+                <th>Projector</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in unissued_slots_data %}
+                <tr>
+                    <td>{{ entry.SLOT_ID }}</td>
+                    <td>{{ entry.TOTAL_NO_OF_SEATS }}</td>
+                    <td>{{ entry.WHITEBOARD }}</td>
+                    <td>{{ entry.PROJECTOR }}</td>
+                    <td><a href="{{ url_for('issue_slot', slot_id=entry.SLOT_ID) }}">Issue Slot</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
